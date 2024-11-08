@@ -20,6 +20,9 @@ CURSOR cursor = { { 1, 1 }, {1, 1} };
 
 /* ================= game data =================== */
 char map[N_LAYER][MAP_HEIGHT][MAP_WIDTH] = { 0 };
+char message[SYSTEM_MESSAGE_H][SYSTEM_MESSAGE_W] = { 0 };
+char info[OBJECT_INFO_H][OBJECT_INFO_W] = { 0 };
+char commands[COMMANDS_H][COMMANDS_W] = { 0 };
 
 RESOURCE resource = { 
 	.spice = 0,
@@ -42,7 +45,7 @@ int main(void) {
 
 	init();
 	intro();
-	display(resource, map, cursor);
+	display(resource, map, message, info, commands, cursor);
 
 	while (1) {
 		// loop 돌 때마다(즉, TICK==10ms마다) 키 입력 확인
@@ -66,7 +69,7 @@ int main(void) {
 		sample_obj_move();
 
 		// 화면 출력
-		display(resource, map, cursor);
+		display(resource, map, message,info,commands, cursor);
 		Sleep(TICK);
 		sys_clock += 10;
 	}
@@ -105,9 +108,49 @@ void init(void) {
 			map[1][i][j] = -1;
 		}
 	}
+	// 시스템 메시지
+	for (int j = 0; j < SYSTEM_MESSAGE_W; j++) {
+		message[0][j] = '#';
+		message[SYSTEM_MESSAGE_H - 1][j] = '#';
+	}
 
+	for (int i = 1; i < SYSTEM_MESSAGE_H - 1; i++) {
+		message[i][0] = '#';
+		message[i][SYSTEM_MESSAGE_W - 1] = '#';
+		for (int j = 1; j < SYSTEM_MESSAGE_W - 1; j++) {
+			message[i][j] = ' ';
+		}
+	}
+	// 상태창
+	for (int j = 0; j < OBJECT_INFO_W; j++) {
+		info[0][j] = '#';
+		info[OBJECT_INFO_H - 1][j] = '#';
+	}
+
+	for (int i = 1; i < OBJECT_INFO_H - 1; i++) {
+		info[i][0] = '#';
+		info[i][OBJECT_INFO_W - 1] = '#';
+		for (int j = 1; j < OBJECT_INFO_W - 1; j++) {
+			info[i][j] = ' ';
+		}
+	}
+	// 명령창
+	for (int j = 0; j < COMMANDS_W; j++) {
+		commands[0][j] = '#';
+		commands[COMMANDS_H - 1][j] = '#';
+	}
+
+	for (int i = 1; i < COMMANDS_H - 1; i++) {
+		commands[i][0] = '#';
+		commands[i][COMMANDS_W - 1] = '#';
+		for (int j = 1; j < COMMANDS_W - 1; j++) {
+			commands[i][j] = ' ';
+		}
+	}
+	
 	// object sample
 	map[1][obj.pos.row][obj.pos.column] = 'o';
+
 }
 
 // (가능하다면) 지정한 방향으로 커서 이동

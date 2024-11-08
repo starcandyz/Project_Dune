@@ -14,6 +14,14 @@
 #define MAP_WIDTH	60
 #define MAP_HEIGHT	18
 
+#define SYSTEM_MESSAGE_W	60
+#define SYSTEM_MESSAGE_H	7
+
+#define OBJECT_INFO_W 30
+#define OBJECT_INFO_H 18
+
+#define COMMANDS_W 30
+#define COMMANDS_H 7
 
 /* ================= 위치와 방향 =================== */
 // 맵에서 위치를 나타내는 구조체
