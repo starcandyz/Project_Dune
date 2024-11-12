@@ -100,4 +100,8 @@ typedef struct {
 	int speed;
 } OBJECT_SAMPLE;
 
+//void initialize_map(char map[N_LAYER][MAP_HEIGHT][MAP_WIDTH]);
+//void initialize_resource(RESOURCE* resource);
+
+
 #endif

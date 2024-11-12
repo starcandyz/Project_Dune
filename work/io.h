@@ -11,24 +11,24 @@ void printc(POSITION pos, char ch, int color);
 void gotoxy(POSITION pos);
 void set_color(int color);
 
-enum ColorType {
-	BLACK,  	//0
-	darkBLUE,	//1
-	DarkGreen,	//2
-	darkSkyBlue,//3
-	DarkRed,  	//4
-	DarkPurple,	//5
-	DarkYellow,	//6
-	GRAY,		//7
-	DarkGray,	//8
-	BLUE,		//9
-	GREEN,		//10
-	SkyBlue,	//11
-	RED,		//12
-	PURPLE,		//13
-	YELLOW,		//14
-	WHITE		//15
-} COLOR;
+
+#define	BLACK  	//0
+#define	darkBLUE	//1
+#define	DarkGreen	//2
+#define	darkSkyBlue //3
+#define	DarkRed  	//4
+#define	DarkPurple	//5
+#define	DarkYellow	//6
+#define	GRAY		//7
+#define	DarkGray	//8
+#define	BLUE		//9
+#define	GREEN		//10
+#define	SkyBlue		//11
+#define	RED			//12
+#define	PURPLE		//13
+#define	YELLOW		//14
+#define	WHITE		//15
+
 
 #endif
 

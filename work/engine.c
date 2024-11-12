@@ -12,6 +12,12 @@ void cursor_move(DIRECTION dir);
 void sample_obj_move(void);
 POSITION sample_obj_next_position(void);
 
+//#define DOUBLE_CLICK 300 // 더블 클릭
+
+// 전역변수 추가
+DIRECTION last_direction = d_stay;
+time_t last_move_clock = 0;
+bool can_move = false;
 
 /* ================= control =================== */
 int sys_clock = 0;		// system-wide clock(ms)
@@ -38,6 +44,14 @@ OBJECT_SAMPLE obj = {
 	.speed = 300,
 	.next_move_time = 300
 };
+
+//void initialize_resource(RESOURCE* resource) {
+//	resource->spice = 0;
+//	resource->spice_max = 50;
+//	resource->population = 10;
+//	resource->population_max = 10;
+//}
+
 
 /* ================= main() =================== */
 int main(void) {
@@ -97,7 +111,7 @@ void init(void) {
 	for (int i = 1; i < MAP_HEIGHT - 1; i++) {
 		map[0][i][0] = '#';
 		map[0][i][MAP_WIDTH - 1] = '#';
-		for (int j = 1; j < MAP_WIDTH-1; j++) {
+		for (int j = 1; j < MAP_WIDTH - 1; j++) {
 			map[0][i][j] = ' ';
 		}
 	}
@@ -147,11 +161,9 @@ void init(void) {
 			commands[i][j] = ' ';
 		}
 	}
-	
-	// object sample
-	map[1][obj.pos.row][obj.pos.column] = 'o';
-
 }
+	// object sample
+	//map[1][obj.pos.row][obj.pos.column] = 'o';
 
 // (가능하다면) 지정한 방향으로 커서 이동
 void cursor_move(DIRECTION dir) {
