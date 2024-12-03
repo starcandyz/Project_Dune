@@ -20,6 +20,12 @@ void printc(POSITION pos, char ch, int color) {
 	printf("%c", ch);
 }
 
+void display_info(POSITION pos, const char* info) {
+	gotoxy((POSITION) { 0, pos.row + 1 }); // 상태창 아래에 위치
+	printf("상태: %s", info);
+}
+
+
 KEY get_key(void) {
 	if (!_kbhit()) {  // 입력된 키가 있는지 확인
 		return k_none;
@@ -37,6 +43,20 @@ KEY get_key(void) {
 		case 80: return k_down;
 		default: return k_undef;
 		}
+	case 27: return k_escape; // ESC 키
 	default: return k_undef;
+	}
+}
+
+void handle_selection(POSITION* pos, int* selected) {
+	if (*selected) {
+		// 선택 취소
+		*selected = 0;
+		display_info(*pos, "선택 취소됨");
+	}
+	else {
+		// 선택
+		*selected = 1;
+		display_info(*pos, "선택됨");
 	}
 }

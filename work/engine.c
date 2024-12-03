@@ -8,7 +8,7 @@
 void init(void);
 void intro(void);
 void outro(void);
-void cursor_move(DIRECTION dir);
+void cursor_move(DIRECTION dir,int steps);
 void sample_obj_move(void);
 POSITION sample_obj_next_position(void);
 
@@ -18,6 +18,10 @@ POSITION sample_obj_next_position(void);
 DIRECTION last_direction = d_stay;
 time_t last_move_clock = 0;
 bool can_move = false;
+int direction_press_count = 0; // 방향키 누른 횟수
+KEY last_key = k_none; // 마지막 눌린 키
+time_t last_key_time = 0; // 마지막 키 입력 시간
+const int DOUBLE_PRESS_TIME_LIMIT = 300; // 더블 클릭 시간 제한 (ms)
 
 /* ================= control =================== */
 int sys_clock = 0;		// system-wide clock(ms)
@@ -62,12 +66,27 @@ int main(void) {
 	display(resource, map, message, info, commands, cursor);
 
 	while (1) {
-		// loop 돌 때마다(즉, TICK==10ms마다) 키 입력 확인
 		KEY key = get_key();
-
-		// 키 입력이 있으면 처리
+		// loop 돌 때마다(즉, TICK==10ms마다) 키 입력 확인
 		if (is_arrow_key(key)) {
-			cursor_move(ktod(key));
+			time_t current_time = time(NULL) * 1000; // 현재 시간(ms)
+
+			if (key == last_key) {
+				// 같은 키가 두 번 눌렸으면 차이를 계산
+				if (current_time - last_key_time < DOUBLE_PRESS_TIME_LIMIT) {
+					// 150ms 이내에 두 번 눌렸을 경우
+					cursor_move(ktod(key), 3); // 3칸 이동
+				}
+				else {
+					cursor_move(ktod(key), 1); // 1칸 이동
+				}
+			}
+			else {
+				cursor_move(ktod(key), 1); // 새로운 방향키가 눌리면 1칸 이동
+			}
+
+			last_key_time = current_time; // 마지막 키 입력 시간 업데이트
+			last_key = key; // 마지막 눌린 키 업데이트
 		}
 		else {
 			// 방향키 외의 입력
@@ -85,7 +104,7 @@ int main(void) {
 		// 화면 출력
 		display(resource, map, message,info,commands, cursor);
 		Sleep(TICK);
-		sys_clock += 10;
+		sys_clock += TICK;
 	}
 }
 
@@ -165,18 +184,23 @@ void init(void) {
 	// object sample
 	//map[1][obj.pos.row][obj.pos.column] = 'o';
 
-// (가능하다면) 지정한 방향으로 커서 이동
-void cursor_move(DIRECTION dir) {
+// 커서 이동 함수, steps 인자를 받아 이동 거리 조정
+void cursor_move(DIRECTION dir, int steps) {
 	POSITION curr = cursor.current;
-	POSITION new_pos = pmove(curr, dir);
 
-	// validation check
-	if (1 <= new_pos.row && new_pos.row <= MAP_HEIGHT - 2 && \
-		1 <= new_pos.column && new_pos.column <= MAP_WIDTH - 2) {
+	cursor.previous = curr;
 
-		cursor.previous = cursor.current;
-		cursor.current = new_pos;
+	for (int i = 0; i < steps; i++) {
+		POSITION new_pos = pmove(curr, dir);
+
+		// validation check
+		if (1 <= new_pos.row && new_pos.row <= MAP_HEIGHT - 2 &&
+			1 <= new_pos.column && new_pos.column <= MAP_WIDTH - 2) {
+			curr = new_pos; // 유효한 위치로 업데이트
+		}
 	}
+
+	cursor.current = curr; // 현재 위치 업데이트
 }
 
 /* ================= sample object movement =================== */
