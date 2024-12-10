@@ -1,4 +1,6 @@
-﻿#include <stdlib.h>
+﻿#define _CRT_SECURE_NO_WARNINGS
+#include <string.h>
+#include <stdlib.h>
 #include <time.h>
 #include <assert.h>
 #include "common.h"
@@ -8,11 +10,10 @@
 void init(void);
 void intro(void);
 void outro(void);
-void cursor_move(DIRECTION dir,int steps);
+void cursor_move(DIRECTION dir, int steps);
 void sample_obj_move(void);
 POSITION sample_obj_next_position(void);
 
-//#define DOUBLE_CLICK 300 // 더블 클릭
 
 // 전역변수 추가
 DIRECTION last_direction = d_stay;
@@ -33,8 +34,9 @@ char map[N_LAYER][MAP_HEIGHT][MAP_WIDTH] = { 0 };
 char message[SYSTEM_MESSAGE_H][SYSTEM_MESSAGE_W] = { 0 };
 char info[OBJECT_INFO_H][OBJECT_INFO_W] = { 0 };
 char commands[COMMANDS_H][COMMANDS_W] = { 0 };
+char map_desc[MAP_HEIGHT][MAP_WIDTH][MAP_DESC_LEN] = { 0 };
 
-RESOURCE resource = { 
+RESOURCE resource = {
 	.spice = 0,
 	.spice_max = 0,
 	.population = 0,
@@ -56,6 +58,20 @@ OBJECT_SAMPLE obj = {
 //	resource->population_max = 10;
 //}
 
+void handle_selection(CURSOR* cursor) {
+	// 선택된 위치의 상태창을 갱신하기 전에 기존 메시지를 지웁니다.
+	clear_info_line(cursor->current);
+
+	POSITION selected_pos = cursor->current;
+	const char* desc = map_desc[selected_pos.row][selected_pos.column];
+
+	if (strlen(desc) > 0) {
+		display_info(selected_pos, desc);  // 설명을 상태창에 출력
+	}
+	else {
+		display_info(selected_pos, "No description.");
+	}
+}
 
 /* ================= main() =================== */
 int main(void) {
@@ -91,10 +107,16 @@ int main(void) {
 		else {
 			// 방향키 외의 입력
 			switch (key) {
-			case k_quit: outro();
+			case k_space:  // 스페이스바 입력
+				handle_selection(&cursor);
+				break;
+			case k_quit: 
+				outro();
+				break;
 			case k_none:
 			case k_undef:
-			default: break;
+			default: 
+				break;
 			}
 		}
 
@@ -102,7 +124,7 @@ int main(void) {
 		sample_obj_move();
 
 		// 화면 출력
-		display(resource, map, message,info,commands, cursor);
+		display(resource, map, message, info, commands, cursor);
 		Sleep(TICK);
 		sys_clock += TICK;
 	}
@@ -110,7 +132,7 @@ int main(void) {
 
 /* ================= subfunctions =================== */
 void intro(void) {
-	printf("DUNE 1.5\n");		
+	printf("DUNE 1.5\n");
 	Sleep(2000);
 	system("cls");
 }
@@ -180,9 +202,10 @@ void init(void) {
 			commands[i][j] = ' ';
 		}
 	}
+	init_map_desc();
 }
-	// object sample
-	//map[1][obj.pos.row][obj.pos.column] = 'o';
+// object sample
+//map[1][obj.pos.row][obj.pos.column] = 'o';
 
 // 커서 이동 함수, steps 인자를 받아 이동 거리 조정
 void cursor_move(DIRECTION dir, int steps) {
@@ -223,7 +246,7 @@ POSITION sample_obj_next_position(void) {
 		}
 		return obj.pos;
 	}
-	
+
 	// 가로축, 세로축 거리를 비교해서 더 먼 쪽 축으로 이동
 	if (abs(diff.row) >= abs(diff.column)) {
 		dir = (diff.row >= 0) ? d_down : d_up;
@@ -231,7 +254,7 @@ POSITION sample_obj_next_position(void) {
 	else {
 		dir = (diff.column >= 0) ? d_right : d_left;
 	}
-	
+
 	// validation check
 	// next_pos가 맵을 벗어나지 않고, (지금은 없지만)장애물에 부딪히지 않으면 다음 위치로 이동
 	// 지금은 충돌 시 아무것도 안 하는데, 나중에는 장애물을 피해가거나 적과 전투를 하거나... 등등
@@ -239,12 +262,18 @@ POSITION sample_obj_next_position(void) {
 	if (1 <= next_pos.row && next_pos.row <= MAP_HEIGHT - 2 && \
 		1 <= next_pos.column && next_pos.column <= MAP_WIDTH - 2 && \
 		map[1][next_pos.row][next_pos.column] < 0) {
-		
+
 		return next_pos;
 	}
 	else {
 		return obj.pos;  // 제자리
 	}
+}
+
+void init_map_desc(void) {
+	strcpy(map_desc[5][5], "Resource site");
+	strcpy(map_desc[10][10], "Enemy camp");
+	strcpy(map_desc[2][2], "Base camp");
 }
 
 void sample_obj_move(void) {

@@ -25,6 +25,12 @@ void display_info(POSITION pos, const char* info) {
 	printf("상태: %s", info);
 }
 
+void clear_info_line(POSITION pos) {
+	// 상태창을 지우는 로직
+	gotoxy((POSITION) { 0, pos.row + 1 });
+	printf("                    ");  // 지울 공간을 공백으로 덮어 씁니다.
+}
+
 
 KEY get_key(void) {
 	if (!_kbhit()) {  // 입력된 키가 있는지 확인
@@ -44,19 +50,7 @@ KEY get_key(void) {
 		default: return k_undef;
 		}
 	case 27: return k_escape; // ESC 키
+	case 32: return k_space;
 	default: return k_undef;
-	}
-}
-
-void handle_selection(POSITION* pos, int* selected) {
-	if (*selected) {
-		// 선택 취소
-		*selected = 0;
-		display_info(*pos, "선택 취소됨");
-	}
-	else {
-		// 선택
-		*selected = 1;
-		display_info(*pos, "선택됨");
 	}
 }

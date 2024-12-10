@@ -36,7 +36,7 @@ void display_commands(char commands[COMMANDS_H][COMMANDS_W]);
 
 void display(
 	RESOURCE resource,
-	char map[N_LAYER][MAP_HEIGHT][MAP_WIDTH], 
+	char map[N_LAYER][MAP_HEIGHT][MAP_WIDTH],
 	char message[SYSTEM_MESSAGE_H][SYSTEM_MESSAGE_W],
 	char info[OBJECT_INFO_H][OBJECT_INFO_W],
 	char commands[COMMANDS_H][COMMANDS_W],
@@ -135,7 +135,7 @@ void display_map(char map[N_LAYER][MAP_HEIGHT][MAP_WIDTH]) {
 }
 
 
- //시스탬 메시지
+//시스탬 메시지
 void project_message(char src[SYSTEM_MESSAGE_H][SYSTEM_MESSAGE_W], char dest[SYSTEM_MESSAGE_H][SYSTEM_MESSAGE_W]) {
 	for (int i = 0; i < SYSTEM_MESSAGE_H; i++) {
 		for (int j = 0; j < SYSTEM_MESSAGE_W; j++) {

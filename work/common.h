@@ -23,6 +23,8 @@
 #define COMMANDS_W 30
 #define COMMANDS_H 7
 
+#define MAP_DESC_LEN 50  // 설명 최대 길이
+
 /* ================= 위치와 방향 =================== */
 // 맵에서 위치를 나타내는 구조체
 typedef struct {
@@ -40,7 +42,7 @@ typedef struct {
 typedef enum {
 	// k_none: 입력된 키가 없음. d_stay(안 움직이는 경우)에 대응
 	k_none = 0, k_up, k_right, k_left, k_down,
-	k_quit, k_escape,
+	k_quit, k_escape, k_space,
 	k_undef, // 정의되지 않은 키 입력	
 } KEY;
 
@@ -100,6 +102,7 @@ typedef struct {
 	int speed;
 } OBJECT_SAMPLE;
 
+void init_map_desc(void);
 //void initialize_map(char map[N_LAYER][MAP_HEIGHT][MAP_WIDTH]);
 //void initialize_resource(RESOURCE* resource);
 

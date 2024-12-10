@@ -25,7 +25,6 @@ void display(
 	char commands[COMMANDS_H][COMMANDS_W],
 	CURSOR cursor
 );
-
 //void display_initial_state(RESOURCE resource, char map[N_LAYER][MAP_HEIGHT][MAP_WIDTH]);
 
 #endif
